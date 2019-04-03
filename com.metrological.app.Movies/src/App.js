@@ -1,44 +1,33 @@
-import MovieList from "./MovieList.js";
-import MovieDetails from "./MovieDetails.js";
-import Api from "../lib/Api.js";
+import Content from "./Content.js";
 
-export default class MyApp extends ux.App {
+export default class App extends ux.App {
 
     static _template() {
         return {
             Content: {
                 alpha: 0,
-                List: {alpha: 0, type: MovieList, signals: {select: "_select"}},
-                Details: {alpha: 0, type: MovieDetails}
+                type: Content
             },
-            Loader: {rect: true, color: 0xFF000000, w: 1920, h: 1080,
-                Label: {text: {text: "Loading..", fontSize: 60}, mount: 0.5, x: 1920/2, y: 1080/2}
+            Player: {
+                alpha: 0,
+                type: ux.tools.player.Player
             }
         }
     }
 
     _init() {
-        this._setState("Loading");
+        this._setState("Content");
+    }
+
+    $play(item) {
+        const player = this.tag('Player');
+        if (player.play({item})) {
+            this._setState("Player");
+        }
     }
 
     static _states() {
         return [
-            class Loading extends this {
-                $enter() {
-                    this.tag("Loader").visible = true;
-
-                    Api.getTopMovies().then((movies) => {
-                        this._loaded(movies);
-                    });
-                }
-                $exit() {
-                    this.tag("Loader").visible = false;
-                }
-                _loaded(movies) {
-                    this.tag("List").movies = movies;
-                    this._setState("Content.List");
-                }
-            },
             class Content extends this {
                 $enter() {
                     this.tag("Content").setSmooth('alpha', 1);
@@ -46,40 +35,23 @@ export default class MyApp extends ux.App {
                 $exit() {
                     this.tag("Content").setSmooth('alpha', 0);
                 }
-                static _states() {
-                    return [
-                        class List extends this {
-                            $enter() {
-                                this.tag("List").setSmooth('alpha', 1);
-                            }
-                            $exit() {
-                                this.tag("List").setSmooth('alpha', 0);
-                            }
-                            _getFocused() {
-                                return this.tag("List");
-                            }
-                            _select(movie) {
-                                this._setState("Content.Details", [movie.data]);
-                            }
-                        },
-                        class Details extends this {
-                            $enter(context, movieData) {
-                                this.tag("Details").movie = movieData;
-                                this.tag("Details").setSmooth('alpha', 1);
-                            }
-                            $exit() {
-                                this.tag("Details").setSmooth('alpha', 0);
-                            }
-                            _getFocused() {
-                                return this.tag("Details");
-                            }
-                            _handleBack() {
-                                this._setState("Content.List");
-                            }
-                        }
-                    ]
+                _getFocused() {
+                    return this.tag("Content");
                 }
-
+            },
+            class Player extends this {
+                $enter() {
+                    this.tag("Player").setSmooth('alpha', 1);
+                }
+                $exit() {
+                    this.tag("Player").setSmooth('alpha', 0);
+                }
+                _handleBack() {
+                    this._setState("Content");
+                }
+                _getFocused() {
+                    return this.tag("Player");
+                }
             }
         ]
     }

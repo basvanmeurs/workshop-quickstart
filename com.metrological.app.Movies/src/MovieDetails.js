@@ -8,6 +8,14 @@ export default class MovieDetails extends lng.Component {
     }
 
     set movie(data) {
+        this._data = data;
         this.tag("Title").text.text = data.title;
     }
+
+    _handleEnter() {
+        if (this._data.teaserUrl) {
+            this.fireAncestors('$play', {stream: {src: this._data.teaserUrl}, title: this._data.title})
+        }
+    }
+
 }
