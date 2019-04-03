@@ -42,7 +42,11 @@ export default class Content extends lng.Component {
                 }
             },
             class Search extends this {
-                $enter() {
+                $enter(context) {
+                    if (context.prevState !== "Details") {
+                        // Do not reset while showing details page from the search results.
+                        this.tag("Search").reset();
+                    }
                     this.tag("Search").setSmooth('alpha', 1);
                 }
                 $exit() {

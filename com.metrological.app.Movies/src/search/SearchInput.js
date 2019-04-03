@@ -38,15 +38,11 @@ export default class SearchInput extends lng.Component {
         this.tag("Cursor").setSmooth('alpha', 0);
     }
 
-    _inactive() {
-        this._clear();
-    }
-
     _valueChanged({value}) {
         this.tag("Input").text.text = value;
     }
 
-    _clear() {
+    clear() {
         this.tag("Keyboard").value = "";
     }
 

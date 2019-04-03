@@ -61,7 +61,6 @@ export default class MovieList extends lng.Component {
         this._index = index;
         index = Math.max(index - this._restIndex, 0);
         let x = index * 640;
-        x = Math.min(x, (this._movies.length * 640 - this.finalW));
         this.tag("Items").setSmooth('x', -x);
     }
 

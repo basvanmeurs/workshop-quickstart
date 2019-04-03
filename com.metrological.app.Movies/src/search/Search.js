@@ -18,6 +18,12 @@ export default class Search extends lng.Component {
         this._setState("Input");
     }
 
+    reset() {
+        this.tag("Input").clear();
+        this.tag("SearchResults").clear();
+        this._setState("Input");
+    }
+
     static _states() {
         return [
             class Input extends this {

@@ -82,6 +82,9 @@ export default class App extends ux.App {
                             _handleUp() {
                                 this._setState("Main.Menu");
                             }
+                            _handleBack() {
+                                this._setState("Main.Menu");
+                            }
                         }
                     ]
                 }

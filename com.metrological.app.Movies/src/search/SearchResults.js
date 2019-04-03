@@ -24,6 +24,15 @@ export default class SearchResults extends lng.Component {
         return this.tag("List");
     }
 
+    _inactive() {
+        this._cancelSearching();
+    }
+
+    clear() {
+        this._cancelSearching();
+        this.tag("List").movies = [];
+    }
+
     static _states() {
         return [
             class Searching extends this {
@@ -47,6 +56,10 @@ export default class SearchResults extends lng.Component {
                 }
                 _processResults(results) {
                     this.tag("List").movies = results;
+                    this._setState("");
+                }
+
+                _cancelSearching() {
                     this._setState("");
                 }
             }
