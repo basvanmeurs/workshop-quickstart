@@ -58,6 +58,10 @@ export default class Menu extends lng.Component {
         return this._items.getAt(this._index);
     }
 
+    get _activeItem() {
+        return this._items.get().find(item => item.active);
+    }
+
     _handleEnter() {
         const value = this._selectedItem.value;
         this.activeItem = value;
@@ -78,6 +82,11 @@ export default class Menu extends lng.Component {
         this.setSmooth('mountY', v ? 0 : 1);
     }
 
+    _focus() {
+        this._index = this._items.getIndex(this._activeItem);
+        this._refocus();
+    }
+
 }
 
 class MenuItem extends lng.Component {
@@ -94,8 +103,8 @@ class MenuItem extends lng.Component {
                 flexItem: false,
                 w: w=>w,
                 x: 0,
-                h: 3,
-                y: h=>h - 3,
+                h: 4,
+                y: h=>h - 8,
                 rect: true
             }
 
@@ -115,7 +124,12 @@ class MenuItem extends lng.Component {
     }
 
     set active(v) {
+        this._isActive = v;
         this.tag("Label").color = v ? 0xFFFFFFFF : 0xFFAAAAAA;
+    }
+
+    get active() {
+        return this._isActive;
     }
 
     _focus() {

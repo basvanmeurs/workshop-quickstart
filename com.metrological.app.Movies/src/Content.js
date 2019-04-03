@@ -1,12 +1,14 @@
 import MovieList from "./MovieList.js";
 import MovieDetails from "./MovieDetails.js";
+import Search from "./Search.js";
 
 export default class Content extends lng.Component {
 
     static _template() {
         return {
             List: {alpha: 0, type: MovieList, signals: {select: "_select"}},
-            Details: {alpha: 0, type: MovieDetails}
+            Details: {alpha: 0, type: MovieDetails},
+            Search: {alpha: 0, type: Search}
         }
     }
 
@@ -16,6 +18,10 @@ export default class Content extends lng.Component {
 
     set movies(movies) {
         this.tag("List").movies = movies;
+    }
+
+    setActivePage(value) {
+        this._setState(value);
     }
 
     static _states() {
@@ -40,6 +46,9 @@ export default class Content extends lng.Component {
                 }
                 $exit() {
                     this.tag("Search").setSmooth('alpha', 0);
+                }
+                _getFocused() {
+                    return this.tag("Search");
                 }
             },
             class Details extends this {

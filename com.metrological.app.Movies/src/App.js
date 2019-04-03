@@ -11,7 +11,7 @@ export default class App extends ux.App {
             },
             Main: {
                 alpha: 0,
-                Menu: {type: Menu, zIndex: 1},
+                Menu: {type: Menu, zIndex: 1, signals: {select: "_selectMenuItem"}},
                 Content: {
                     type: Content
                 },
@@ -66,6 +66,12 @@ export default class App extends ux.App {
                                 return this.tag("Menu");
                             }
                             _handleDown() {
+                                this._setState("Main.Content");
+                            }
+                            _selectMenuItem(value) {
+                                this.tag("Content").setActivePage(value);
+
+                                // Automatically switch over to content focus.
                                 this._setState("Main.Content");
                             }
                         },
