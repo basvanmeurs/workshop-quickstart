@@ -9,4 +9,10 @@ export default class Api {
             }, 500)
         });
     }
+
+    static search() {
+        return this.getTopMovies().then((results) => {
+            return results.filter(item => (Math.random() > 0.5));
+        });
+    }
 }

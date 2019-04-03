@@ -51,6 +51,7 @@ export default class SearchInput extends lng.Component {
     }
 
     _enter() {
+        this.signal("search", this.tag("Keyboard").value);
     }
 
 }

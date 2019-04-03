@@ -3,22 +3,34 @@ import MovieItem from "./MovieItem.js";
 export default class MovieList extends lng.Component {
     static _template() {
         return {
-            y: 200,
-            Title: {x: 50, text: {text: "Top movies", fontSize: 60, fontStyle: 'bold'}},
-            Scroller: {y: 100, w: 1920, h: 400,
+            Title: {visible: false, text: {text: "", fontSize: 60, fontStyle: 'bold'}},
+            Scroller: {y: 100,
                 Items: {}
             }
         }
     }
 
+    set title(v) {
+        this.tag("Title").text.text = v;
+    }
+
     _construct() {
         this._index = 0;
+        this._restIndex = 0;
     }
 
     set movies(movies) {
+        this.tag("Title").visible = movies.length > 0;
+
         this.tag("Items").children = movies.map((movie, index) => ({
-            type: MovieItem, data: movie, x: index * 640 + 50, passSignals: {selected: "select"}
+            type: MovieItem, data: movie, x: index * 640, passSignals: {selected: "select"}
         }));
+
+        this._setIndex(0);
+    }
+
+    hasItems() {
+        return this._movies.length > 0;
     }
 
     get _movies() {
@@ -28,19 +40,28 @@ export default class MovieList extends lng.Component {
     _handleRight() {
         if (this._index < this._movies.length - 1) {
             this._setIndex(this._index + 1);
+        } else {
+            return false;
         }
     }
 
     _handleLeft() {
         if (this._index > 0) {
             this._setIndex(this._index - 1);
+        } else {
+            return false;
         }
     }
 
+    set restIndex(v) {
+        this._restIndex = v;
+    }
 
     _setIndex(index) {
         this._index = index;
-        let x = Math.max(0, Math.min(index - 2, this._movies.length - 3)) * 640;
+        index = Math.max(index - this._restIndex, 0);
+        let x = index * 640;
+        x = Math.min(x, (this._movies.length * 640 - this.finalW));
         this.tag("Items").setSmooth('x', -x);
     }
 
