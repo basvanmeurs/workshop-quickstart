@@ -18,4 +18,8 @@ export default class MovieDetails extends lng.Component {
         }
     }
 
+    _setFocusSettings(settings) {
+        settings.showMenu = false;
+    }
+
 }

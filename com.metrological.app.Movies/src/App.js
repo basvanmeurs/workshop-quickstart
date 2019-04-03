@@ -1,12 +1,20 @@
 import Content from "./Content.js";
+import Menu from "./Menu.js";
+import Api from "../lib/Api.js";
 
 export default class App extends ux.App {
 
     static _template() {
         return {
-            Content: {
+            Loader: {rect: true, color: 0xFF000000, w: 1920, h: 1080,
+                Label: {text: {text: "Loading..", fontSize: 60}, mount: 0.5, x: 1920/2, y: 1080/2}
+            },
+            Main: {
                 alpha: 0,
-                type: Content
+                Menu: {type: Menu, zIndex: 1},
+                Content: {
+                    type: Content
+                },
             },
             Player: {
                 alpha: 0,
@@ -16,7 +24,7 @@ export default class App extends ux.App {
     }
 
     _init() {
-        this._setState("Content");
+        this._setState("Loading");
     }
 
     $play(item) {
@@ -28,12 +36,48 @@ export default class App extends ux.App {
 
     static _states() {
         return [
-            class Content extends this {
+            class Loading extends this {
                 $enter() {
-                    this.tag("Content").setSmooth('alpha', 1);
+                    this.tag("Loader").visible = true;
+
+                    Api.getTopMovies().then((movies) => {
+                        this._loaded(movies);
+                    });
                 }
                 $exit() {
-                    this.tag("Content").setSmooth('alpha', 0);
+                    this.tag("Loader").visible = false;
+                }
+                _loaded(movies) {
+                    this.tag("Content").movies = movies;
+                    this._setState("Main.Content");
+                }
+            },
+            class Main extends this {
+                $enter() {
+                    this.tag("Main").setSmooth('alpha', 1);
+                }
+                $exit() {
+                    this.tag("Main").setSmooth('alpha', 0);
+                }
+                static _states() {
+                    return [
+                        class Menu extends this {
+                            _getFocused() {
+                                return this.tag("Menu");
+                            }
+                            _handleDown() {
+                                this._setState("Main.Content");
+                            }
+                        },
+                        class Content extends this {
+                            _getFocused() {
+                                return this.tag("Content");
+                            }
+                            _handleUp() {
+                                this._setState("Main.Menu");
+                            }
+                        }
+                    ]
                 }
                 _getFocused() {
                     return this.tag("Content");
@@ -47,13 +91,21 @@ export default class App extends ux.App {
                     this.tag("Player").setSmooth('alpha', 0);
                 }
                 _handleBack() {
-                    this._setState("Content");
+                    this._setState("Main.Content");
                 }
                 _getFocused() {
                     return this.tag("Player");
                 }
             }
         ]
+    }
+
+    _setFocusSettings(settings) {
+        settings.showMenu = true;
+    }
+
+    _handleFocusSettings(settings) {
+        this.tag("Menu").show = settings.showMenu;
     }
 
 }

@@ -3,6 +3,7 @@ import MovieItem from "./MovieItem.js";
 export default class MovieList extends lng.Component {
     static _template() {
         return {
+            y: 200,
             Title: {x: 50, text: {text: "Top movies", fontSize: 60, fontStyle: 'bold'}},
             Scroller: {y: 100, w: 1920, h: 400,
                 Items: {}
